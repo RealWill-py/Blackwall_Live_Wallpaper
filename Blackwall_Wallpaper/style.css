@@ -1,0 +1,373 @@
+:root {
+    --neon-primary: #00ffcc;
+    --neon-secondary: #ff007f;
+    --neon-yellow: #fcee0a;
+    --blackwall-red: #ff003c;
+    --bg-glass: rgba(5, 12, 24, 0.85);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body, html {
+    width: 100%; height: 100%; overflow: hidden;
+    background: transparent; font-family: 'Consolas', monospace;
+    user-select: none; pointer-events: none;
+}
+
+.glitch-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background:
+        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+        linear-gradient(90deg, rgba(255, 0, 60, 0.03), rgba(0, 0, 0, 0.01), rgba(255, 0, 60, 0.03));
+    background-size: 100% 4px, 6px 100%;
+    pointer-events: none; z-index: 10; opacity: 0.6;
+}
+
+canvas {
+    display: block; position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%; z-index: 2;
+}
+
+/* ============ DECK UNIFICADO (barra horizontal acima da taskbar) ============ */
+.cyber-center-deck {
+    position: fixed;
+    bottom: 72px;                          /* acima da taskbar (~48px) */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;                     /* nunca quebra */
+    align-items: stretch;                  /* alturas iguais */
+    gap: 0;
+    z-index: 5;
+    pointer-events: auto;
+
+    background:
+        linear-gradient(rgba(255, 0, 60, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 60, 0.03) 1px, transparent 1px),
+        var(--bg-glass);
+    background-size: 8px 8px, 8px 8px, auto;
+    border: 1px solid rgba(255, 0, 60, 0.55);
+    border-left: 5px solid var(--blackwall-red);
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    box-shadow: 0 0 24px rgba(255, 0, 60, 0.25), inset 0 0 12px rgba(255, 0, 60, 0.05);
+    backdrop-filter: blur(4px);
+    overflow: hidden;
+}
+
+/* ============ MÓDULO (filho da barra) ============ */
+.hud-box {
+    position: relative;
+    color: var(--neon-primary);
+    padding: 12px 22px;
+    min-width: 0;
+    flex: 0 0 auto;
+    border-right: 1px solid rgba(255, 0, 60, 0.3);
+    transition: background 0.25s ease;
+}
+.hud-box:last-child {
+    border-right: none;
+}
+.hud-box:hover {
+    background: rgba(255, 0, 60, 0.06);
+}
+
+/* Larguras por tipo de widget */
+.hud-clock { width: 260px; }
+.hud-sys   { width: 300px; }
+.hud-media { width: 360px; }
+
+/* Tag inferior direita (só no último módulo) */
+.hud-media::after {
+    content: "BLACKWALL_HD_ENGINE";
+    position: absolute; bottom: 2px; right: 8px;
+    font-size: 7px; color: rgba(255, 0, 60, 0.6);
+    letter-spacing: 1px;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
+    z-index: 2;
+}
+.hud-media:hover::after {
+    color: var(--neon-secondary);
+    text-shadow: 0 0 4px var(--neon-secondary);
+}
+
+/* Sweep de scanline no hover */
+.hud-box::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    top: -50%;
+    height: 40%;
+    background: linear-gradient(to bottom,
+        transparent,
+        rgba(255, 0, 60, 0.20),
+        rgba(255, 0, 127, 0.08),
+        transparent);
+    pointer-events: none;
+    transition: top 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+}
+.hud-box:hover::before {
+    top: 110%;
+}
+
+/* Corner brackets (só nos cantos extremos do deck) */
+.corner {
+    position: absolute;
+    width: 10px; height: 10px;
+    border: 0 solid var(--blackwall-red);
+    pointer-events: none;
+    opacity: 0.55;
+    transition: width 0.25s ease, height 0.25s ease,
+                border-color 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+    z-index: 3;
+}
+.corner.c-tl {
+    top: 4px; left: 6px;
+    border-top-width: 2px; border-left-width: 2px;
+}
+.corner.c-br {
+    bottom: 4px; right: 6px;
+    border-bottom-width: 2px; border-right-width: 2px;
+}
+.cyber-center-deck:hover .corner {
+    opacity: 1;
+    border-color: var(--neon-secondary);
+    box-shadow: 0 0 8px var(--neon-secondary);
+    width: 14px; height: 14px;
+}
+
+/* Header */
+.hud-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px; letter-spacing: 2px;
+    color: var(--blackwall-red);
+    margin-bottom: 6px;
+    text-transform: uppercase; font-weight: bold;
+    position: relative; z-index: 2;
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.hud-box:hover .hud-header {
+    color: var(--neon-secondary);
+    text-shadow: 1px 0 rgba(255, 0, 60, 0.8), -1px 0 rgba(0, 255, 204, 0.6);
+}
+.header-text {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.hud-box:hover .header-text {
+    animation: header-glitch 1.2s linear infinite;
+}
+@keyframes header-glitch {
+    0%, 88%, 100% { transform: translate(0, 0); }
+    90% { transform: translate(-1px, 0); }
+    92% { transform: translate(1px, 0); }
+    94% { transform: translate(-1px, 1px); }
+    96% { transform: translate(1px, -1px); }
+}
+.hud-version {
+    font-size: 8px;
+    color: rgba(255, 0, 60, 0.55);
+    letter-spacing: 1px;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+.hud-box:hover .hud-version {
+    color: var(--neon-secondary);
+    text-shadow: 0 0 4px var(--neon-secondary);
+}
+
+/* Status LED */
+.status-led {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: #00ff88;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #00ff88;
+    animation: led-blink 1.6s ease-in-out infinite;
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
+}
+.status-led.led-warn {
+    background: var(--neon-yellow);
+    box-shadow: 0 0 6px var(--neon-yellow);
+    animation-duration: 2.2s;
+}
+.status-led.led-media {
+    background: var(--neon-secondary);
+    box-shadow: 0 0 6px var(--neon-secondary);
+    animation-duration: 1.2s;
+}
+.hud-box:hover .status-led {
+    transform: scale(1.6);
+}
+@keyframes led-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* Relógio */
+.hud-time {
+    font-size: 26px; font-weight: bold; letter-spacing: 3px;
+    color: #fff; text-shadow: 0 0 10px var(--blackwall-red);
+    text-align: center;
+    position: relative; z-index: 2;
+    transition: text-shadow 0.3s ease;
+}
+.hud-box:hover .hud-time {
+    text-shadow:
+        0 0 12px var(--blackwall-red),
+        0 0 24px var(--neon-secondary);
+}
+.hud-date {
+    font-size: 10px; letter-spacing: 2px;
+    color: var(--neon-secondary); text-shadow: 0 0 8px var(--neon-secondary);
+    text-align: center; margin-top: 4px;
+    position: relative; z-index: 2;
+}
+
+/* Barras CPU/RAM */
+.sys-meter {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 6px; font-size: 10px; font-weight: bold;
+    position: relative; z-index: 2;
+}
+.sys-meter:last-child { margin-bottom: 0; }
+.sys-label {
+    width: 32px; color: var(--blackwall-red);
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.hud-box:hover .sys-label {
+    color: var(--neon-secondary);
+    text-shadow: 0 0 6px var(--neon-secondary);
+}
+.bar-bg {
+    flex-grow: 1; height: 7px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 0, 60, 0.3);
+    overflow: hidden; position: relative;
+}
+.bar-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--blackwall-red), var(--neon-secondary));
+    box-shadow: 0 0 8px var(--neon-secondary);
+    transition: width 0.4s ease, box-shadow 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+.bar-fill::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.28),
+        transparent);
+    transform: translateX(-100%);
+    transition: transform 0.7s ease;
+}
+.hud-box:hover .bar-fill::after {
+    transform: translateX(100%);
+}
+
+/* Mídia */
+.media-content {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 2px;
+    position: relative; z-index: 2;
+}
+.album-icon {
+    width: 36px; height: 36px;
+    border: 1px solid var(--blackwall-red);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: var(--blackwall-red);
+    box-shadow: 0 0 10px rgba(255, 0, 60, 0.4);
+    background: rgba(255, 0, 60, 0.1);
+    flex-shrink: 0;
+    transition: box-shadow 0.08s linear, transform 0.25s ease, color 0.25s ease;
+}
+.hud-box:hover .album-icon {
+    color: var(--neon-secondary);
+    transform: rotate(-4deg) scale(1.05);
+    box-shadow: 0 0 18px rgba(255, 0, 60, 0.75);
+}
+
+.track-info { overflow: hidden; flex: 1; }
+#track-title {
+    font-size: 11px; font-weight: bold; color: #fff;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    text-shadow: 0 0 8px var(--blackwall-red);
+    transition: text-shadow 0.25s ease;
+}
+.hud-box:hover #track-title {
+    text-shadow: 0 0 10px var(--blackwall-red), 0 0 18px var(--neon-secondary);
+}
+#track-artist {
+    font-size: 9px; color: var(--neon-secondary); margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    text-shadow: 0 0 6px var(--blackwall-red);
+}
+
+/* Waveform */
+.audio-wave {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 12px;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 0, 60, 0.2);
+    position: relative; z-index: 2;
+}
+.audio-wave span {
+    flex: 1;
+    height: 20%;
+    background: linear-gradient(to top, var(--blackwall-red), var(--neon-secondary));
+    box-shadow: 0 0 4px rgba(255, 0, 60, 0.6);
+    border-radius: 1px;
+    animation: wave-idle 1.6s ease-in-out infinite;
+    transform-origin: bottom;
+    transition: box-shadow 0.25s ease;
+}
+.audio-wave.playing span {
+    animation-name: wave-active;
+    animation-duration: 0.6s;
+    box-shadow: 0 0 6px var(--neon-secondary);
+}
+.hud-box:hover .audio-wave span {
+    box-shadow: 0 0 8px var(--neon-secondary);
+}
+
+.audio-wave span:nth-child(1)  { animation-delay: 0.00s; }
+.audio-wave span:nth-child(2)  { animation-delay: 0.08s; }
+.audio-wave span:nth-child(3)  { animation-delay: 0.16s; }
+.audio-wave span:nth-child(4)  { animation-delay: 0.24s; }
+.audio-wave span:nth-child(5)  { animation-delay: 0.32s; }
+.audio-wave span:nth-child(6)  { animation-delay: 0.40s; }
+.audio-wave span:nth-child(7)  { animation-delay: 0.48s; }
+.audio-wave span:nth-child(8)  { animation-delay: 0.56s; }
+.audio-wave span:nth-child(9)  { animation-delay: 0.64s; }
+.audio-wave span:nth-child(10) { animation-delay: 0.72s; }
+.audio-wave span:nth-child(11) { animation-delay: 0.80s; }
+.audio-wave span:nth-child(12) { animation-delay: 0.88s; }
+.audio-wave span:nth-child(13) { animation-delay: 0.96s; }
+.audio-wave span:nth-child(14) { animation-delay: 1.04s; }
+.audio-wave span:nth-child(15) { animation-delay: 1.12s; }
+.audio-wave span:nth-child(16) { animation-delay: 1.20s; }
+.audio-wave span:nth-child(17) { animation-delay: 1.28s; }
+.audio-wave span:nth-child(18) { animation-delay: 1.36s; }
+.audio-wave span:nth-child(19) { animation-delay: 1.44s; }
+.audio-wave span:nth-child(20) { animation-delay: 1.52s; }
+
+@keyframes wave-idle {
+    0%, 100% { height: 20%; opacity: 0.6; }
+    50%      { height: 45%; opacity: 0.9; }
+}
+@keyframes wave-active {
+    0%, 100% { height: 25%; }
+    20%      { height: 90%; }
+    40%      { height: 40%; }
+    60%      { height: 100%; }
+    80%      { height: 55%; }
+}

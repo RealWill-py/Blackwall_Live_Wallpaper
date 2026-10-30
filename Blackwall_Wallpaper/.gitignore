@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+config.json
+blackwall.log
+build/
+dist/
+*.spec
+!build.spec
+.pytest_cache/
+.coverage

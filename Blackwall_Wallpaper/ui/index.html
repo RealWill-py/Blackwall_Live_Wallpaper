@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blackwall Voxel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="voxelCanvas"></canvas>
+  <canvas id="glitchCanvas"></canvas>
+
+  <div id="hud" class="hud">
+    <div class="hud-clock">
+      <div id="clock-time">--:--:--</div>
+      <div id="clock-date">---</div>
+    </div>
+    <div class="hud-stats" id="hud-stats">
+      <div class="stat"><span>CPU</span><b id="stat-cpu">0%</b></div>
+      <div class="stat"><span>RAM</span><b id="stat-ram">0%</b></div>
+    </div>
+    <div class="hud-media" id="hud-media">
+      <div class="media-title" id="media-title">---</div>
+      <div class="media-artist" id="media-artist">---</div>
+      <div class="media-bar"><div id="media-progress"></div></div>
+    </div>
+  </div>
+
+  <script>
+    // === SEU MOTOR VOXEL AQUI ===
+    // Cole o JS do seu index.html original dentro deste bloco e,
+    // no final, exponha: window.__voxelEngine = { setImage, nextImage, setZDepth };
+  </script>
+
+  <script>
+    (function () {
+      const clockTime = document.getElementById("clock-time");
+      const clockDate = document.getElementById("clock-date");
+      const cpuEl = document.getElementById("stat-cpu");
+      const ramEl = document.getElementById("stat-ram");
+      const mediaTitle = document.getElementById("media-title");
+      const mediaArtist = document.getElementById("media-artist");
+      const mediaBar = document.getElementById("media-progress");
+
+      function fmtTime(d) { return d.toLocaleTimeString("pt-BR", { hour12: false }); }
+      function fmtDate(d) {
+        return d.toLocaleDateString("pt-BR", {
+          weekday: "long", day: "2-digit", month: "long",
+        });
+      }
+      function tickClock() {
+        const d = new Date();
+        clockTime.textContent = fmtTime(d);
+        clockDate.textContent = fmtDate(d);
+      }
+      setInterval(tickClock, 500);
+      tickClock();
+
+      window.blackwall = {
+        updateSysmon(cpu, ram) {
+          cpuEl.textContent = cpu.toFixed(0) + "%";
+          ramEl.textContent = ram.toFixed(0) + "%";
+        },
+        updateMedia(json) {
+          try {
+            const m = JSON.parse(json);
+            mediaTitle.textContent = m.title || "---";
+            mediaArtist.textContent = m.artist || "---";
+          } catch (e) { /* ignore */ }
+        },
+        updateBeat(level) {
+          mediaBar.style.transform = "scaleX(" + Math.min(1, level) + ")";
+        },
+        nextImage() {
+          if (window.__voxelEngine && window.__voxelEngine.nextImage) {
+            window.__voxelEngine.nextImage();
+          }
+        },
+      };
+    })();
+  </script>
+</body>
+</html>

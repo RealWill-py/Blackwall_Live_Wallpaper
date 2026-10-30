@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cyberpunk Blackwall HD Wallpaper</title>
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glitch-overlay" id="glitch-layer"></div>
+    <canvas id="voxel-canvas"></canvas>
+
+    <div class="cyber-center-deck">
+        <!-- CLOCK -->
+        <div class="hud-box hud-clock">
+            <span class="corner c-tl"></span>
+            <span class="corner c-br"></span>
+            <div class="hud-header">
+                <span class="status-led"></span>
+                <span class="header-text">// ADMIN CONNECTED: WILL</span>
+                <span class="hud-version">v2.7.1</span>
+            </div>
+            <div id="hud-time" class="hud-time">00:00:00</div>
+            <div id="hud-date" class="hud-date">NIGHT_CITY // ONLINE</div>
+        </div>
+
+        <!-- SYSTEM -->
+        <div class="hud-box hud-sys">
+            <span class="corner c-tl"></span>
+            <span class="corner c-br"></span>
+            <div class="hud-header">
+                <span class="status-led led-warn"></span>
+                <span class="header-text">// SYSTEM_METRICS</span>
+                <span class="hud-version">T:0x1A</span>
+            </div>
+            <div class="sys-meter">
+                <span class="sys-label">CPU</span>
+                <div class="bar-bg"><div id="cpu-bar" class="bar-fill"></div></div>
+                <span id="cpu-val">0%</span>
+            </div>
+            <div class="sys-meter">
+                <span class="sys-label">RAM</span>
+                <div class="bar-bg"><div id="ram-bar" class="bar-fill"></div></div>
+                <span id="ram-val">0%</span>
+            </div>
+        </div>
+
+        <!-- MEDIA -->
+        <div class="hud-box hud-media">
+            <span class="corner c-tl"></span>
+            <span class="corner c-br"></span>
+            <div class="hud-header">
+                <span class="status-led led-media"></span>
+                <span class="header-text">// AUDIO_FEED_INPUT</span>
+                <span class="hud-version">48kHz</span>
+            </div>
+            <div class="media-content">
+                <div class="album-icon">&#9835;</div>
+                <div class="track-info">
+                    <div id="track-title">AGUARDANDO M&Iacute;DIA...</div>
+                    <div id="track-artist">SYSTEM_STANDBY</div>
+                </div>
+            </div>
+            <div class="audio-wave" id="audio-wave">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

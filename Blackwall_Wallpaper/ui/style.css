@@ -1,0 +1,61 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  width: 100%; height: 100%;
+  background: #000;
+  overflow: hidden;
+  font-family: "Consolas", "JetBrains Mono", monospace;
+  color: #e0e0e0;
+  user-select: none;
+  cursor: default;
+}
+canvas {
+  position: fixed; inset: 0;
+  width: 100vw; height: 100vh;
+  display: block;
+}
+#glitchCanvas { pointer-events: none; opacity: 0.35; mix-blend-mode: screen; }
+
+.hud {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; gap: 14px;
+  pointer-events: none;
+  background: rgba(10, 0, 6, 0.55);
+  border: 1px solid rgba(255, 0, 60, 0.55);
+  padding: 22px 30px;
+  box-shadow: 0 0 24px rgba(255, 0, 60, 0.35), inset 0 0 12px rgba(255, 0, 60, 0.15);
+  backdrop-filter: blur(4px);
+  border-radius: 4px;
+  min-width: 320px;
+  text-align: center;
+}
+.hud-clock #clock-time {
+  font-size: 42px; font-weight: 700;
+  color: #ff003c;
+  text-shadow: 0 0 10px rgba(255, 0, 60, 0.7);
+  letter-spacing: 2px;
+}
+.hud-clock #clock-date {
+  font-size: 12px; letter-spacing: 3px;
+  color: #ff6688; text-transform: uppercase;
+}
+.hud-stats {
+  display: flex; justify-content: center; gap: 24px;
+  font-size: 12px; letter-spacing: 1px; color: #b0b0c0;
+}
+.hud-stats .stat span { color: #ff003c; margin-right: 6px; }
+.hud-stats .stat b { color: #e0e0e0; font-weight: 400; }
+.hud-media { display: flex; flex-direction: column; gap: 4px; }
+.hud-media .media-title { font-size: 14px; color: #fff; font-weight: 600; }
+.hud-media .media-artist { font-size: 11px; color: #ff6688; }
+.hud-media .media-bar {
+  height: 2px; background: rgba(255, 0, 60, 0.2);
+  margin-top: 6px; position: relative; overflow: hidden;
+}
+.hud-media #media-progress {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, #ff003c, #ff66aa);
+  transform-origin: left; transform: scaleX(0);
+  transition: transform 80ms linear;
+}
