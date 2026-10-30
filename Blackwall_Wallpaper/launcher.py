@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import sys
 from pathlib import Path
 
@@ -12,7 +13,7 @@ from PyQt6.QtWebEngineCore import QWebEngineSettings
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import QApplication, QMainWindow
 
-from config import Config, IMAGES_DIR
+from config import Config, IMAGES_DIR, APP_DIR
 from wallpaper.bridge import Bridge
 from wallpaper.injector import (
     ExplorerWatchdog,
@@ -22,7 +23,19 @@ from wallpaper.injector import (
 )
 from wallpaper.tray import build_tray
 
-LOG_PATH = Path(__file__).parent / "blackwall.log"
+
+def resource_path(relative: str) -> Path:
+    """Caminho de um recurso empacotado (HTML/CSS/JS).
+
+    - Rodando normal: pasta do projeto.
+    - Rodando .exe: pasta temporaria do PyInstaller (_MEIPASS).
+    """
+    if getattr(sys, "frozen", False):
+        return Path(getattr(sys, "_MEIPASS", Path(sys.executable).parent)) / relative
+    return Path(__file__).parent / relative
+
+
+LOG_PATH = APP_DIR / "blackwall.log"
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -61,7 +74,8 @@ class WallpaperWindow(QMainWindow):
         self.channel.registerObject("bridge", self.bridge)
         self.web_view.page().setWebChannel(self.channel)
 
-        html_path = Path(__file__).parent / "index.html"
+        html_path = resource_path("index.html")
+        log.info("Carregando HTML: %s", html_path)
         self.web_view.setUrl(QUrl.fromLocalFile(str(html_path)))
 
         self.tray = build_tray(
@@ -166,7 +180,10 @@ def _setup_autostart(enable: bool) -> None:
             r"Software\Microsoft\Windows\CurrentVersion\Run",
             0, winreg.KEY_SET_VALUE,
         )
-        exe = f'"{sys.executable}" "{Path(__file__).resolve()}"'
+        if getattr(sys, "frozen", False):
+            exe = f'"{sys.executable}"'
+        else:
+            exe = f'"{sys.executable}" "{Path(__file__).resolve()}"'
         if enable:
             winreg.SetValueEx(key, "BlackwallWallpaper", 0, winreg.REG_SZ, exe)
         else:
