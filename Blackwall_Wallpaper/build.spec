@@ -1,21 +1,16 @@
 # build.spec -- PyInstaller
-# Uso: pyinstaller build.spec --clean
-# Saida: dist/BlackwallWallpaper/
-
 from pathlib import Path
 from PyInstaller.utils.hooks import collect_submodules, collect_data_files
 
 ROOT = Path(SPECPATH)
 
-# Empacota UI (HTML/CSS/JS). As imagens do usuario NAO entram no exe:
-# elas ficam ao lado do .exe, em ./images/
 datas = [
     (str(ROOT / "index.html"), "."),
     (str(ROOT / "style.css"), "."),
     (str(ROOT / "script.js"), "."),
+    (str(ROOT / "icon.ico"), "."),  # Inclui o ícone no bundle para o tray usar
 ]
 
-# winrt tem modulos carregados dinamicamente que o PyInstaller nao ve
 hiddenimports = (
     collect_submodules("winrt")
     + collect_submodules("pycaw")
@@ -28,7 +23,6 @@ hiddenimports = (
     ]
 )
 
-# QtWebEngine precisa dos arquivos de dados (locales, resources, etc.)
 datas += collect_data_files("PyQt6.Qt6", subdir="resources")
 
 a = Analysis(
@@ -40,14 +34,8 @@ a = Analysis(
     hookspath=[],
     runtime_hooks=[],
     excludes=[
-        # Remove peso morto
-        "tkinter",
-        "matplotlib",
-        "numpy",
-        "pandas",
-        "scipy",
-        "IPython",
-        "pytest",
+        "tkinter", "matplotlib", "numpy", "pandas", "scipy", 
+        "IPython", "pytest", "PyQt6.Qt3DCore", "PyQt6.QtMultimedia"
     ],
     noarchive=False,
 )
@@ -61,12 +49,10 @@ exe = EXE(
     exclude_binaries=True,
     name="BlackwallWallpaper",
     debug=False,
-    bootloader_ignore_signals=False,
     strip=False,
-    upx=False,           # WebEngine nao gosta de UPX
-    console=False,       # sem janela de terminal
-    disable_windowed_traceback=False,
-    icon=None,           # coloque "icon.ico" aqui se quiser icone
+    upx=False,
+    console=False,
+    icon="icon.ico",  # Define o ícone do .exe
 )
 
 coll = COLLECT(

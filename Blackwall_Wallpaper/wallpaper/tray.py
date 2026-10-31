@@ -1,11 +1,28 @@
 """System tray do wallpaper."""
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
 from PyQt6.QtGui import QAction, QColor, QIcon, QPainter, QPixmap
 from PyQt6.QtWidgets import QMenu, QSystemTrayIcon
 
 
+def _get_icon_path() -> Path:
+    """Retorna o caminho do ícone, tanto rodando .py quanto .exe"""
+    if getattr(sys, "frozen", False):
+        base = Path(getattr(sys, "_MEIPASS", Path(sys.executable).parent))
+    else:
+        base = Path(__file__).parent.parent
+    return base / "icon.ico"
+
+
 def _make_icon(color: str = "#ff003c") -> QIcon:
+    ico_path = _get_icon_path()
+    if ico_path.exists():
+        return QIcon(str(ico_path))
+
+    # Fallback: círculo vermelho (caso o icon.ico não exista)
     pm = QPixmap(32, 32)
     pm.fill(QColor("transparent"))
     p = QPainter(pm)

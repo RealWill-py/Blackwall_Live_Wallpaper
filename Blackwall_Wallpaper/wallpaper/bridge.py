@@ -4,13 +4,18 @@ from __future__ import annotations
 import json
 import logging
 import os
+from pathlib import Path
+from urllib.parse import quote
 
 from PyQt6.QtCore import QObject, pyqtSlot
 
+from config import IMAGES_DIR
 from wallpaper.media_reader import AudioPeakReader, MediaReader
 from wallpaper.system_monitor import SystemMonitor
 
 log = logging.getLogger(__name__)
+
+IMAGE_EXTS = (".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp")
 
 
 class Bridge(QObject):
@@ -22,6 +27,8 @@ class Bridge(QObject):
         self.audio = AudioPeakReader()
         self.media = MediaReader(poll_ms=cfg.media_poll_ms)
         self.media.start()
+        log.info("Pasta de imagens: %s (existe=%s)",
+                 IMAGES_DIR, IMAGES_DIR.exists())
 
     @pyqtSlot(result=str)
     def getSystemStats(self) -> str:
@@ -50,20 +57,41 @@ class Bridge(QObject):
 
     @pyqtSlot(result=str)
     def getImagesList(self) -> str:
+        """Retorna lista de URLs absolutas 'file:///...' das imagens.
+
+        Usa IMAGES_DIR do config.py (ao lado do .exe quando congelado).
+        Retorna URL absoluta para o navegador nao tentar resolver
+        caminhos relativos em _internal/.
+        """
         try:
-            images_dir = os.path.join(os.path.dirname(os.path.dirname(
-                os.path.abspath(__file__))), "images")
-            if os.path.isdir(images_dir):
-                exts = (".png", ".jpg", ".jpeg", ".webp", ".gif")
-                files = [
-                    f"images/{f}"
-                    for f in sorted(os.listdir(images_dir))
-                    if f.lower().endswith(exts)
-                ]
-                return json.dumps(files)
+            if not IMAGES_DIR.exists():
+                log.warning("Pasta images/ nao existe: %s", IMAGES_DIR)
+                return json.dumps([])
+
+            files = sorted(
+                f for f in os.listdir(IMAGES_DIR)
+                if f.lower().endswith(IMAGE_EXTS)
+            )
+
+            if not files:
+                log.warning("Pasta images/ vazia: %s", IMAGES_DIR)
+                return json.dumps([])
+
+            # Converte para file:/// URL absoluta
+            urls = []
+            for f in files:
+                full = (Path(IMAGES_DIR) / f).resolve()
+                # quote() escapa espacos e caracteres especiais na URL
+                urls.append(full.as_uri())
+
+            log.info("getImagesList: %d imagem(ns) encontrada(s).", len(urls))
+            for u in urls:
+                log.info("  - %s", u)
+            return json.dumps(urls)
+
         except Exception:
             log.exception("getImagesList falhou")
-        return json.dumps([])
+            return json.dumps([])
 
     @pyqtSlot()
     def nextImage(self) -> None:
