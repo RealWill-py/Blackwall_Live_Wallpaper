@@ -2,80 +2,191 @@
 
 
 
-Blackwall Cyberpunk Live Wallpaper
-Live wallpaper interativo estilo Cyberpunk Blackwall para Windows.
-Backend PyQt6/WebEngine + motor de renderização HTML5 Canvas (Linhas/Voxels).
+════════════════════════════════════════════════════════════════════
 
-O projeto foi refatorado para oferecer uma experiência imersiva e de alta performance, integrando-se nativamente à área de trabalho do Windows.
+B L A C K W A L L
+Cyberpunk Live Wallpaper for Windows
+"Uma cortina de luz atrás do seu desktop"
 
-✨ Funcionalidades
-Injeção Nativa no Desktop: O wallpaper roda atrás dos ícones da área de trabalho (camada WorkerW), agindo como um papel de parede real e não como uma janela flutuante.
+════════════════════════════════════════════════════════════════════
 
-Motor Blackwall (Linhas): Renderização baseada em linhas verticais cuja altura e brilho reagem à luminosidade da imagem, criando o efeito de "cortina de luz" cyberpunk.
+SOBRE
+─────
 
-Background Procedural: Textura de fundo dinâmica com grid de linhas, chuva digital (matrix rain), scanlines e efeitos de glitch sutis.
+O Blackwall é um live wallpaper interativo para Windows inspirado no
+universo de Cyberpunk 2077. Ao contrário de wallpapers animados comuns,
+ele é injetado diretamente na camada WorkerW do Windows — ou seja, roda
+de verdade atrás dos ícones da área de trabalho, como um papel de parede
+nativo.
 
-HUD Unificado: Painel estilo Cyber-Deck fixado na parte inferior da tela (acima da barra de tarefas), exibindo Relógio, Métricas do Sistema (CPU/RAM) e Informações de Mídia.
+A renderização é feita em linhas verticais que reagem à luminosidade das
+suas imagens: partes claras geram linhas longas e brilhantes, partes
+escuras geram linhas curtas e discretas. O resultado é uma "cortina de
+luz" que pulsa com a música e reage ao mouse.
 
-Media Reader Avançado: Leitura de mídia global (Spotify, YouTube, etc.) via API nativa do Windows (WinRT), com fallback para PowerShell.
+Backend em Python (PyQt6 + WebEngine), frontend em HTML5 Canvas.
 
-Beat Detector: Efeitos visuais no HUD e nas linhas que pulsam de acordo com o áudio do sistema (via pycaw).
+RECURSOS
+────────
 
-Controle de Densidade: Ajuste em tempo real da quantidade de linhas/voxels (5 níveis) diretamente pelo ícone na bandeja do sistema.
+• Injeção nativa no desktop
+O wallpaper vive atrás dos ícones, na camada WorkerW do Windows.
 
-Multi-monitor Ready: A injeção e o dimensionamento são calculados com base no monitor primário, evitando distorções em setups com múltiplas telas.
+• Motor Blackwall
+Linhas verticais reativas à luminosidade da imagem, com efeito de
+profundidade e oscilação sutil.
 
-Watchdog do Explorer: Se o explorer.exe reiniciar, o wallpaper é reinjetado automaticamente.
+• Background procedural
+Grid de linhas, chuva digital estilo Matrix, scanlines e glitches
+ocasionais — tudo gerado em tempo real.
 
-🚀 Instalação
+• HUD Cyber-Deck
+Painel unificado com relógio, métricas de CPU/RAM e informações da
+mídia atual, fixado acima da barra de tarefas.
+
+• Leitor de mídia nativo
+Detecta o que está tocando (Spotify, YouTube, etc.) via WinRT, com
+fallback automático para PowerShell.
+
+• Beat detector
+O ícone do álbum pulsa em sincronia com o áudio do sistema.
+
+• Densidade ajustável
+5 níveis de voxels, alterados pelo menu da bandeja sem reiniciar.
+
+• Watchdog do Explorer
+Se o explorer.exe reiniciar, o wallpaper se reinjeta sozinho.
+
+• Multi-monitor ready
+Dimensiona e posiciona automaticamente no monitor primário.
+
+REQUISITOS
+──────────
+
+• Windows 10 ou 11
+• Python 3.10 ou superior (marcar "Add to PATH" na instalação)
+• 2 GB de espaço livre em disco
+
+INSTALAÇÃO
+──────────
+
+Clone ou baixe o projeto:
+
+git clone https://github.com/RealWill-py/Live_Wallpaper_Windows.git
+cd Live_Wallpaper_Windows
+
 Instale as dependências:
 
 pip install -r requirements.txt
 
-Coloque suas imagens (de preferência 1920x1080 - 16:9) na pasta images/.
+Coloque suas imagens na pasta "images/"
+Resolução recomendada: 1920x1080 (16:9) — PNG, JPG ou WEBP.
 
 Inicie o wallpaper:
 
 python launcher.py
 
-Ou clique duas vezes no arquivo play.vbs para iniciar sem a janela do terminal.
+Prefere sem terminal? Clique duas vezes em "play.vbs".
 
-🎮 Controles
-ESC: Fecha o wallpaper.
+CONTROLES
+─────────
 
-Tray Icon (Bandeja do Sistema):
+Encerrar ESC ou bandeja → "Fechar Wallpaper"
+Próxima imagem bandeja → "Próxima Imagem"
+Aumentar densidade bandeja → "Densidade" → "Mais voxels (+)"
+Diminuir densidade bandeja → "Densidade" → "Menos voxels (−)"
 
-Próxima Imagem: Avança manualmente a imagem.
+ESTRUTURA DO PROJETO
+────────────────────
 
-Densidade de Voxels: Aumenta (+) ou diminui (-) a quantidade de linhas na tela.
+Blackwall_Wallpaper/
+│
+├── launcher.py Entry point · injeção · sync
+├── config.py Configurações persistidas
+├── build.spec PyInstaller
+├── play.vbs Launcher silencioso
+│
+├── index.html DOM (Canvas + HUD)
+├── style.css Estilo do Cyber-Deck
+├── script.js Motor de render + bridge
+│
+├── wallpaper/
+│ ├── injector.py Win32 · WorkerW · watchdog
+│ ├── bridge.py QWebChannel Python ↔ JS
+│ ├── media_reader.py WinRT · PowerShell · pycaw
+│ ├── system_monitor.py CPU / RAM
+│ └── tray.py System tray
+│
+├── tests/ pytest
+└── images/ Suas artes
 
-Fechar Wallpaper: Encerra o processo.
+GERAR EXECUTÁVEL (.EXE)
+───────────────────────
 
-🛠️ Estrutura do Projeto
-launcher.py # Entry point (PyQt6, injeção WorkerW, sync)
-config.py # Configurações persistentes (config.json)
-index.html # Estrutura DOM (Canvas + HUD)
-style.css # Estilização do Cyber-Deck e hover effects
-script.js # Lógica do motor (Linhas, background, bridge)
-wallpaper/
-injector.py # API Win32 (WorkerW, watchdog, monitor primário)
-bridge.py # Ponte QWebChannel Python <-> JS
-media_reader.py # WinRT/PS + Beat Detector (pycaw)
-system_monitor.py # Leitura de CPU/RAM (psutil)
-tray.py # System Tray e menus
-tests/ # Testes unitários (pytest)
-images/ # Suas artes (.png, .jpg, .webp)
+pip install pyinstaller
+python -m PyInstaller build.spec --clean --noconfirm
 
-🧪 Testes e Build
-Testes: Execute pytest -v para rodar a suíte de testes.
+O resultado fica em "dist/BlackwallWallpaper/".
+Distribua a pasta inteira — não apague a subpasta "_internal/".
 
-Build (.exe): Execute pyinstaller build.spec. O executável será gerado em dist/BlackwallWallpaper/.
+IMPORTANTE: depois de compilar, crie a pasta "images/" dentro de
+"dist/BlackwallWallpaper/" e coloque suas imagens lá. O .exe não
+lê imagens empacotadas — só as que estão ao lado dele.
 
-📝 Notas Técnicas
-Resolução Ideal: Para preencher a tela perfeitamente sem margens, use imagens com a mesma proporção do seu monitor (ex: 1920x1080).
+TESTES
+──────
 
-Compatibilidade: Desenvolvido e testado em Windows 10/11. A injeção força a flag WS_CHILD antes do SetParent para garantir a renderização correta.
+pytest -v
 
-Fallbacks de Mídia: Se o winrt-runtime falhar na instalação, o leitor de mídia muda automaticamente para um script PowerShell em segundo plano.
+NOTAS TÉCNICAS
+──────────────
 
-Beat Audio: Se a API do pycaw não for reconhecida, o recurso de beat é desativado silenciosamente para não quebrar o wallpaper.
+Resolução ideal das imagens
+───────────────────────────
+Use imagens com a mesma proporção do seu monitor. 1920x1080 é o
+ideal para preencher a tela sem margens. Qualquer arquivo maior é
+reduzido internamente para uma grade de 380 a 680px — imagens
+gigantes não trazem ganho visual, só peso extra.
+
+Compatibilidade com Windows
+───────────────────────────
+A injeção força a flag WS_CHILD antes do SetParent. Sem isso, a
+janela fica na hierarquia do WorkerW mas o Windows a renderiza como
+popup flutuante — o famoso "efeito de app em tela cheia". Também
+há um sync_qt_geometry que propaga WM_SIZE para o QWebEngineView,
+senão o canvas mantém o viewport antigo (2944px em vez de 1920px
+em multi-monitor).
+
+Leitor de mídia
+───────────────
+Três camadas, em ordem de preferência:
+
+WinRT (winrt-runtime) — nativo, assíncrono
+
+PowerShell — Windows.Media.Control em subprocesso oculto
+
+psutil — varredura de títulos de janela
+
+Se o pycaw falhar, o beat detector é desativado silenciosamente.
+
+PALETA
+──────
+
+Blackwall Red #ff003c Borda, glow principal
+Neon Magenta #ff007f Hover, topo das linhas
+Neon Yellow #fcee0a LED de alerta
+Neon Green #00ff88 LED de status
+Background #010204 Fundo do canvas
+
+LICENÇA
+───────
+
+MIT — use, modifique e redistribua à vontade.
+Contribuições são muito bem-vindas.
+
+════════════════════════════════════════════════════════════════════
+
+// NIGHT CITY // ONLINE
+
+════════════════════════════════════════════════════════════════════
+
