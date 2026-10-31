@@ -1,10 +1,7 @@
-<img width="1920" height="1080" alt="{76CB2620-CC5B-445A-B2F8-080E2B0CFED7}" src="https://github.com/user-attachments/assets/2c5c6fb9-a3a8-4d15-aca7-e320084a3471" />
 <div align="center">
 
 # 🌆 BLACKWALL
 
-**O verdadeiro live wallpaper para o seu desktop.**
-*Uma cortina de luz cyberpunk entre você e o sistema.*
 
 [![Windows](https://img.shields.io/badge/Windows-10%2F11-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://microsoft.com)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
@@ -12,6 +9,12 @@
 [![License](https://img.shields.io/badge/License-MIT-ff003c?style=for-the-badge)](LICENSE)
 
 <br>
+
+<!-- Substitua o link abaixo por um GIF ou Print do seu wallpaper -->
+<img width="1920" height="1080" alt="{76CB2620-CC5B-445A-B2F8-080E2B0CFED7}" src="https://github.com/user-attachments/assets/2c5c6fb9-a3a8-4d15-aca7-e320084a3471" />
+</div>
+
+---
 
 ## ⚡ Sobre o Projeto
 
@@ -53,3 +56,25 @@ O **Blackwall** não é apenas um vídeo em loop. É um motor de renderização 
     </td>
   </tr>
 </table>
+
+---
+
+## 🚀 Instalação Rápida
+
+### Opção 1: Instalador (Recomendado)
+1. Baixe o arquivo **`Blackwall-Setup.exe`** na aba de Releases.
+2. Execute e siga as instruções na tela.
+3. Coloque suas imagens (`.png`, `.jpg`, `.webp`) na pasta `images` criada ao lado do executável.
+4. Abra o atalho **Blackwall** no seu Desktop.
+
+### Opção 2: Rodando via código (Dev)
+```bash
+# Clone o repositório
+git clone https://github.com/RealWill-py/Live_Wallpaper_Windows.git
+cd Live_Wallpaper_Windows
+
+# Instale as dependências
+pip install -r requirements.txt
+
+# Inicie
+python launcher.py
